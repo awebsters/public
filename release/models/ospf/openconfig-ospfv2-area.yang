@@ -5,8 +5,7 @@ submodule openconfig-ospfv2-area {
   }
 
   import openconfig-extensions { prefix "oc-ext"; }
-  import openconfig-ospf-types { prefix "oc-ospf-types"; }
-  import ietf-inet-types { prefix "inet"; }
+  import openconfig-ospf { prefix "oc-ospf"; }
 
   // include other required submodules
   include openconfig-ospfv2-area-interface;
@@ -23,7 +22,14 @@ submodule openconfig-ospfv2-area {
     "This submodule provides OSPFv2 configuration and operational
     state parameters that are specific to the area context";
 
-  oc-ext:openconfig-version "0.5.2";
+  oc-ext:openconfig-version "0.5.3";
+
+  revision "2026-04-10" {
+    description
+      "Move ospfv2-area-virtual-link-config,ospfv2-area-config to 
+       common";
+    reference "0.5.3";
+  }
 
   revision "2024-06-17" {
     description
@@ -128,18 +134,6 @@ submodule openconfig-ospfv2-area {
     reference "0.0.1";
   }
 
-  grouping ospfv2-area-config {
-    description
-      "Configuration parameters relating to an OSPF area";
-
-    leaf identifier {
-      type oc-ospf-types:ospf-area-identifier;
-      description
-        "An identifier for the OSPFv2 area - described as either a
-        32-bit unsigned integer, or a dotted-quad";
-    }
-  }
-
   grouping ospfv2-area-mpls-config {
     description
       "Configuration parameters relating to OSPFv2 extensions for
@@ -153,19 +147,6 @@ submodule openconfig-ospfv2-area {
     }
   }
 
-  grouping ospfv2-area-virtual-link-config {
-    description
-      "Configuration parameters relating to a virtual-link within
-      the OSPF area";
-
-    leaf remote-router-id {
-      type inet:ipv4-address-no-zone;
-      description
-        "The router ID of the device which terminates the remote end
-        of the virtual link";
-    }
-  }
-
   grouping ospfv2-area-structure {
     description
       "Structural grouping for configuration and operational state
@@ -175,14 +156,14 @@ submodule openconfig-ospfv2-area {
       description
         "Configuration parameters relating to an OSPFv2 area";
 
-      uses ospfv2-area-config;
+      uses oc-ospf:ospf-area-config;
     }
 
     container state {
       config false;
       description
         "Operational state parameters relating to an OSPFv2 area";
-      uses ospfv2-area-config;
+      uses oc-ospf:ospf-area-config;
     }
 
     container mpls {
@@ -232,14 +213,15 @@ submodule openconfig-ospfv2-area {
         container config {
           description
             "Configuration parameters relating to the OSPF virtual link";
-          uses ospfv2-area-virtual-link-config;
+          uses oc-ospf:ospf-area-virtual-link-config;
         }
 
         container state {
           config false;
           description
             "State parameters relating to the OSPF virtual link";
-          uses ospfv2-area-virtual-link-config;
+          uses oc-ospf:ospf-area-virtual-link-config;
+          uses oc-ospf:ospf-area-interface-neighbor-state;
           uses ospfv2-area-interface-neighbor-state;
         }
       }
